@@ -1,2 +1,114 @@
 # JobQueue
 Program that simulates a number of jobs being processed in a queue.
+
+
+For this project, a simulation of a computer processing a number of job queues 
+is created where jobs are imported from a data file and iputted into an inital
+queue. A job contains a job name, an arrival time, and a run time. The clock
+is incremented at the end of every cycle, and everything in the program hinges
+upon the clock counter. Every time the clock is incremented, the input queue
+is checked to see if the next job's arrival time is equal to the clock. If so,
+it is sent to a job queue where the jobs are waiting to be processed. Then 
+the current job that is being processed is checked to see if the job has 
+finished. Once it is finished, it is put into a finished job queue for 
+later analysis.
+Some jobs must wait if their arrival time has been reached and a job is still
+being processed, and sometimes there are no jobs being processed as none of 
+their arrival times have been met (idle time). This process is repeated until
+no jobs are left in the job queue and the initial number of jobs equals to the 
+number of completed jobs.
+
+Methods:
+
+		public static void getFile(String fileName)
+		This method takes an input file name, and reads in the data. It creates
+		jobs and inputs them into the initial inputQueue.
+
+		public static void inputToJobQueueCheck()
+		This method checks to see if the current job's arrival time is equal to
+		the current clock time. If so, it is moved from the input queue to the
+		jobs queue to be processed. If it is the first job to be processed, then
+		the start time is initialized to the current clock time.
+
+		public static void jobQueueToFinishedQueueCheck()
+		This method checks to see if the job that is being processed is 
+		finished by checking the end time with the current clock time. If
+		it is equal, the calculations for its wait time and turnaround time
+		are made, and the job is sent to the finished queue.
+
+		public static void increaseClock()
+		This method increments the clock by one.
+
+		public static int usageOfCPU() throws CloneNotSupportedException
+		This method computes the time the CPU spent running and processing.
+		It does this by copying the finished queue, and adding all of the
+		run times together.
+
+		public static double averageWaitTime() throws CloneNotSupportedException
+		This method computes the average wait time of the CPU during this 
+		process (the average amount of time the jobs spent waiting in queue).
+		It does this by copying the finished queue, and adding all of the 
+		wait times together and dividing by the total number of jobs.
+
+		public static int idleTime() throws CloneNotSupportedException
+		This method computer the total time the CPU spent in idle (not 
+		processing anything). This is computed by summing all of the differences
+		between the current job's arrival time and the sum of the previous
+		job's start and run times.
+
+		public static double percentUsageOfCPU(int usageofCPU, int idleOfCPU)
+		This method computes the percent of time the CPU spent processing. 
+		It is calculated by diving the total time the CPU spent processing by
+		the total time the CPU spent processing and the total CPU idle time.
+
+
+The sample data file that I made is myJobs.dat that has six jobs in it. The jobs look as follows:
+
+    job1	01  07
+    job2	05	02
+    job3	08  04
+    job4	12 	05
+    job5	19 	03
+    job6	27 	01
+
+
+When I ran my program, it displayed:
+
+    job id  arrival start   run     wait    turnaround
+    time    time    time    time    time
+    ------  -----   -----   -----   ------  ----------
+    job1    1       1       7       0       7
+    job2    5       8       2       3       5
+    job3    8       10      4       2       6
+    job4    12      14      5       2       7
+    job5    19      19      3       0       3
+    job6    27      27      1       0       1
+
+
+Average Wait Time => 1.17
+        CPU Usage => 22.00
+         CPU Idle => 5.00
+    CPU Usage (%) => 81.48%
+
+Each of these numbers are correct. The calculations were performed as follows:
+
+Average wait time = (Total wait time)/(# of total jobs executed)
+So, average wait time = (3 + 2 + 2)/6 => (7)/(6) 1.17
+
+CPU Usage = Total time the CPU spent running = total run time
+So, CPU Usage = 7 + 2 + 4 + 5 + 3 + 1 = 22
+
+CPU Idle = Total time the CPU spent not processing anything
+This only occurs when a job is finished being processed, and the next job's
+arrival time has not yet been reached. 
+Total Idle time = SUM(the current job's arrival time - (previous job's start 
+time + previous job's run time))
+So, CPU Idle = ((8)-(1+7)) + ((10)-(8+2)) + ((14)-(10+4)) + ((19)-(14+5)) +
+((27)-(19+3)) = 0 + 0 + 0 + 0 + 5 = 5
+
+CPU Usage = (CPU Usage)/(CPU Usage + CPU Idle)
+So, CPU Usage = (22)/(22+5) = 0.8148*100 = 81.48%
+
+
+
+
